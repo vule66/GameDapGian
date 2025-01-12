@@ -53,12 +53,24 @@ public class GameDapGian extends JPanel implements ActionListener, MouseListener
 
         // Thêm lắng nghe phím để dừng game
         addKeyListener(new KeyAdapter() {
-            @Override
+
+            boolean isPaused = false;
+
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    togglePause();
+                    isPaused = !isPaused; // Đảo trạng thái giữa pause và resume
+
+                    if(isPaused==true){
+                        startCountdown();
+                    }
+                    if(isPaused==false) {
+                        togglePause();
+                    }
                 }
             }
+
+
+
         });
 
         // Khởi tạo vùng nút tạm dừng
@@ -75,6 +87,7 @@ public class GameDapGian extends JPanel implements ActionListener, MouseListener
 
         // Nếu game đang dừng, vẽ nền và các gián như bình thường
         if (isGamePaused) {
+            gameSound.stopBackgroundMusic(); // Dừng nhạc nền
             g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
 
             // Vẽ gián
@@ -85,6 +98,7 @@ public class GameDapGian extends JPanel implements ActionListener, MouseListener
 
             // Vẽ thời gian đếm ngược nếu đang đếm ngược
             if (isCountdownActive) {
+                gameSound.playBackgroundMusic("C:\\Users\\vu\\Documents\\Zalo Received Files\\jungle-style-videogame-190083.wav");
                 int secondsLeft = countdownTime / 1000 + 1; // Chuyển đổi thời gian đếm ngược sang giây và làm tròn lên
                 g.setFont(new Font("Arial", Font.BOLD, 100));
                 g.setColor(Color.RED);
@@ -167,9 +181,10 @@ public class GameDapGian extends JPanel implements ActionListener, MouseListener
                 countdownTime -= 20; // Giảm thời gian đếm ngược (20 milliseconds)
                 if (countdownTime <= 0) {
                     isCountdownActive = false;
-                    isGamePaused = false; // Tiếp tục trò chơi
+                    isGamePaused = false;// Tiếp tục trò chơi
                 }
             }
+
             repaint();
             return;
         }
